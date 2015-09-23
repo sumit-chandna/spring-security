@@ -20,8 +20,7 @@
 	</c:if>
 	<label for="username">Username</label> <input type="text" id="username"
 		name="username" /> <BR /> <label for="password">Password</label> <input
-		type="password" id="password" name="password" /> <label for="domain">Domain</label>
-	<input type="text" id="domain" name="domain" />
+		type="password" id="password" name="password" />
 	<div class="form-actions">
 		<input id="submit" class="btn" name="submit" type="submit"
 			value="Login" />
