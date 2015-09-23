@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bean:beans xmlns:bean="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+	http://www.springframework.org/schema/security  http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+	<http pattern="/resources/**" security="none"></http>
+	<http use-expressions="true" entry-point-ref="loginEntryPoint">
+		<custom-filter ref="domainFormLoginFilter" position="FORM_LOGIN_FILTER" />
+		<intercept-url pattern="/"
+			access="hasAnyRole('ROLE_ANONYMOUS','ROLE_USER')" />
+		<intercept-url pattern="/signup/*"
+			access="hasAnyRole('ROLE_ANONYMOUS','ROLE_USER')" />
+		<intercept-url pattern="/login/*"
+			access="hasAnyRole('ROLE_ANONYMOUS','ROLE_USER')" />
+		<intercept-url pattern="/logout"
+			access="hasAnyRole('ROLE_ANONYMOUS','ROLE_USER')" />
+		<intercept-url pattern="/events/form" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/events/" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+		<access-denied-handler error-page="/errors/403" />
+		<!-- login-page : specifies where spring security will redirect the browser 
+			if a protected page is accessed and user is not authenticated [default :/spring_security_login 
+			] -->
+		<!-- login-processing-url: specifies the URL that the login form should 
+			be submitted to using HTTP POST [default :/j_spring_security_check] -->
+		<!-- username-parameter[default: j_username], password-parameter [default 
+			: j_password ]: specify the HTTP parameters that spring security will use 
+			to authenticate the user when processing login-processing-url -->
+		<!-- authentication-failure-url:specifies the page that Spring Security 
+			will redirect to if the username and password submitted to login-processing-url 
+			are invalid -->
+		<!-- default-target-url[default: context root of the application.] After 
+			a successful login attempt, the user will be sent to the default-target-url 
+			attribute of the <form-login> element. If left undefined, default-target-url 
+			will be the context root of the application. -->
+		<!-- <form-login login-page="/login/form" login-processing-url="/login" 
+			username-parameter="username" password-parameter="password" authentication-failure-url="/login/form?error" 
+			default-target-url="/default" /> <logout logout-url="/logout" logout-success-url="/login/form?logout" 
+			/> -->
+	</http>
+	<authentication-manager alias="authenticationManager">
+		<!-- <authentication-provider user-service-ref="calendarUserDetailsService" 
+			/> -->
+		<authentication-provider ref="calendarUserAuthenticationProvider" />
+	</authentication-manager>
+	<bean:bean xmlns="http://www.springframework.org/schema/beans"
+		id="domainFormLoginFilter"
+		class="org.skcorg.springsecurity.core.filter.DomainUsernamePasswordAuthenticationFilter">
+		<property name="filterProcessesUrl" value="/login" />
+		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="usernameParameter" value="username" />
+		<property name="passwordParameter" value="password" />
+		<property name="authenticationSuccessHandler">
+			<bean
+				class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+				<property name="defaultTargetUrl" value="/default" />
+			</bean>
+		</property>
+		<property name="authenticationFailureHandler">
+			<bean
+				class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+				<property name="defaultFailureUrl" value="/login/form?error" />
+			</bean>
+		</property>
+	</bean:bean>
+	<bean:bean xmlns="http://www.springframework.org/schema/beans"
+		id="loginEntryPoint"
+		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<bean:constructor-arg value="/login/form" />
+	</bean:bean>
+</bean:beans>
