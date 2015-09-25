@@ -13,6 +13,15 @@ public class SignupForm {
 	private String email;
 	@NotEmpty(message = "Password is required")
 	private String password;
+	private String openId;
+
+	public String getOpenId() {
+		return openId;
+	}
+
+	public void setOpenId(String openId) {
+		this.openId = openId;
+	}
 
 	/**
 	 * Gets the email address for this user.

@@ -17,4 +17,6 @@ public interface UserRepository extends
 	public CalendarUser findUserByEmail(@Param("email") String email);
 
 	public List<CalendarUser> findUsersByEmail(@Param("email") String email);
+
+	public CalendarUser findUsersByOpenid(@Param("openid") String openid);
 }

@@ -3,12 +3,12 @@ package org.skcorg.springsecurity.core.provider;
 import java.util.Collection;
 
 import org.skcorg.springsecurity.core.authority.CalendarUserAuthorityUtils;
-import org.skcorg.springsecurity.core.token.DomainUserNamePasswordAuthenticationToken;
 import org.skcorg.springsecurity.domain.CalendarUser;
 import org.skcorg.springsecurity.service.CalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,10 +32,8 @@ public class CalendarUserAuthenticationProvider implements
 	@Override
 	public Authentication authenticate(Authentication authentication)
 			throws AuthenticationException {
-		DomainUserNamePasswordAuthenticationToken token = (DomainUserNamePasswordAuthenticationToken) authentication;
-		String userName = token.getName();
-		String domain = token.getDomain();
-		String email = userName + "@" + domain;
+		UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
+		String email = token.getName();
 		CalendarUser user = null;
 		if (email != null) {
 			user = calendarService.findUserByEmail(email);
@@ -49,14 +47,13 @@ public class CalendarUserAuthenticationProvider implements
 		}
 		Collection<? extends GrantedAuthority> authorities = CalendarUserAuthorityUtils
 				.createAuthorities(user);
-		return new DomainUserNamePasswordAuthenticationToken(user, password,
-				authorities, domain);
+		return new UsernamePasswordAuthenticationToken(user, password,
+				authorities);
 	}
 
 	@Override
 	public boolean supports(Class<?> authentication) {
-		return DomainUserNamePasswordAuthenticationToken.class
-				.equals(authentication);
+		return UsernamePasswordAuthenticationToken.class.equals(authentication);
 	}
 
 }

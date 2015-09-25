@@ -18,13 +18,16 @@
 	<c:if test="${param.logout != null}">
 		<div class="alert alert-success">You have been logged out.</div>
 	</c:if>
-	<label for="username">Username</label> <input type="text" id="username"
+	<!-- <label for="username">Username</label> <input type="text" id="username"
 		name="username" /> <BR /> <label for="password">Password</label> <input
-		type="password" id="password" name="password" /> <label for="domain">Domain</label>
-	<input type="text" id="domain" name="domain" />
+		type="password" id="password" name="password" />
 	<div class="form-actions">
 		<input id="submit" class="btn" name="submit" type="submit"
 			value="Login" />
-	</div>
+	</div> -->
+	<c:url var="googleLogoUrl" value="/resources/google-logo.png" />
+	<img src="${googleLogoUrl}"></img> <input name="openid_identifier"
+		type="hidden" value="https://me.yahoo.com/a/L73gX9Yjkt2SKmqcgkzrbF7gGjRP" /> <input
+		type="submit" value="Sign with Google" />
 </form>
 <jsp:include page="./includes/footer.jsp" />

@@ -1,5 +1,8 @@
 package org.skcorg.springsecurity.controller;
 
+import java.util.Enumeration;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.skcorg.springsecurity.domain.CalendarUser;
@@ -7,6 +10,7 @@ import org.skcorg.springsecurity.model.SignupForm;
 import org.skcorg.springsecurity.service.CalendarService;
 import org.skcorg.springsecurity.service.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,7 +37,14 @@ public class SignupController {
 	}
 
 	@RequestMapping("/signup/form")
-	public String signup(@ModelAttribute SignupForm signupForm) {
+	public String signup(HttpServletRequest request,
+			@ModelAttribute SignupForm signupForm) {
+		SignupForm sessionSignupForm = (SignupForm) request.getSession()
+				.getAttribute("signupForm");
+		if (sessionSignupForm != null) {
+			signupForm.setEmail(sessionSignupForm.getEmail());
+			signupForm.setOpenId(sessionSignupForm.getOpenId());
+		}
 		return "signup/form";
 	}
 
@@ -56,6 +67,7 @@ public class SignupController {
 		user.setFirstName(signupForm.getFirstName());
 		user.setLastName(signupForm.getLastName());
 		user.setPassword(signupForm.getPassword());
+		user.setOpenId(signupForm.getOpenId());
 		CalendarUser calendarUser = calendarService.createUser(user);
 		if (calendarUser != null) {
 			user.setId(calendarUser.getId());

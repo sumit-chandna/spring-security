@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bean:beans xmlns:bean="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
-	http://www.springframework.org/schema/security  http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd 
+	http://www.springframework.org/schema/security  http://www.springframework.org/schema/security/spring-security.xsd">
 	<http pattern="/resources/**" security="none"></http>
-	<http use-expressions="true" entry-point-ref="loginEntryPoint">
-		<custom-filter ref="domainFormLoginFilter" position="FORM_LOGIN_FILTER" />
+	<http use-expressions="true" auto-config="true">
 		<intercept-url pattern="/"
 			access="hasAnyRole('ROLE_ANONYMOUS','ROLE_USER')" />
 		<intercept-url pattern="/signup/*"
@@ -33,39 +32,32 @@
 			a successful login attempt, the user will be sent to the default-target-url 
 			attribute of the <form-login> element. If left undefined, default-target-url 
 			will be the context root of the application. -->
-		<!-- <form-login login-page="/login/form" login-processing-url="/login" 
-			username-parameter="username" password-parameter="password" authentication-failure-url="/login/form?error" 
-			default-target-url="/default" /> <logout logout-url="/logout" logout-success-url="/login/form?logout" 
-			/> -->
+		<openid-login login-page="/login/form"
+			login-processing-url="/login" authentication-failure-url="/login/form?error"
+			default-target-url="/default" authentication-failure-handler-ref="authenticationFailureHandler"
+			authentication-success-handler-ref="authenticationSuccessHandler"
+			user-service-ref="calendarUserDetailsService">
+			<attribute-exchange>
+				<openid-attribute name="email"
+					type="http://axschema.org/contact/email" required="true" />
+				<openid-attribute name="name"
+					type="http://schema.openid.net/namePerson/friendly" />
+			</attribute-exchange>
+		</openid-login>
+		<logout logout-url="/logout" delete-cookies="JSESSIONID"
+			logout-success-url="/login/form?logout" />
 	</http>
 	<authentication-manager alias="authenticationManager">
-		<!-- <authentication-provider user-service-ref="calendarUserDetailsService" 
-			/> -->
 		<authentication-provider ref="calendarUserAuthenticationProvider" />
 	</authentication-manager>
 	<bean:bean xmlns="http://www.springframework.org/schema/beans"
-		id="domainFormLoginFilter"
-		class="org.skcorg.springsecurity.core.filter.DomainUsernamePasswordAuthenticationFilter">
-		<property name="filterProcessesUrl" value="/login" />
-		<property name="authenticationManager" ref="authenticationManager" />
-		<property name="usernameParameter" value="username" />
-		<property name="passwordParameter" value="password" />
-		<property name="authenticationSuccessHandler">
-			<bean
-				class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
-				<property name="defaultTargetUrl" value="/default" />
-			</bean>
-		</property>
-		<property name="authenticationFailureHandler">
-			<bean
-				class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
-				<property name="defaultFailureUrl" value="/login/form?error" />
-			</bean>
-		</property>
+		id="authenticationFailureHandler" class="org.skcorg.springsecurity.core.handler.CustomFailureHandler">
+		<property name="defaultFailureUrl" value="/access-denied" />
+		<property name="companyInfoURL" value="/signup/form" />
 	</bean:bean>
 	<bean:bean xmlns="http://www.springframework.org/schema/beans"
-		id="loginEntryPoint"
-		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
-		<bean:constructor-arg value="/login/form" />
+		id="authenticationSuccessHandler" class="org.skcorg.springsecurity.core.handler.CustomSuccessHandler">
+		<property name="companyInfoURL" value="/default" />
+
 	</bean:bean>
 </bean:beans>

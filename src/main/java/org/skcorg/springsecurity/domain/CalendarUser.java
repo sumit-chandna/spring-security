@@ -26,7 +26,8 @@ import javax.persistence.Table;
 @NamedQueries(value = {
 		@NamedQuery(name = "CalendarUser.getUser", query = "select c from CalendarUser c where c.id=:id "),
 		@NamedQuery(name = "CalendarUser.findUserByEmail", query = "select c from CalendarUser c where c.email = :email "),
-		@NamedQuery(name = "CalendarUser.findUsersByEmail", query = "select c from CalendarUser c where c.email LIKE :email ") })
+		@NamedQuery(name = "CalendarUser.findUsersByEmail", query = "select c from CalendarUser c where c.email LIKE :email "),
+		@NamedQuery(name = "CalendarUser.findUsersByOpenid", query = "select c from CalendarUser c where c.openId LIKE :openid ") })
 public class CalendarUser implements Serializable {
 
 	/**
@@ -45,6 +46,16 @@ public class CalendarUser implements Serializable {
 	private String email;
 	@Column(name = "PASSWORD")
 	private String password;
+	@Column(name = "OPEN_ID", length = 1000)
+	private String openId;
+
+	public String getOpenId() {
+		return openId;
+	}
+
+	public void setOpenId(String openId) {
+		this.openId = openId;
+	}
 
 	/**
 	 * Gets the email address for this user. When authenticating against this

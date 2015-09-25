@@ -20,7 +20,7 @@ public class CalendarUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
-		CalendarUser user = userRepository.findUserByEmail(username);
+		CalendarUser user = userRepository.findUsersByOpenid(username);
 		if (user == null) {
 			throw new UsernameNotFoundException("Invalid username/password.");
 		}

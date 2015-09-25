@@ -15,7 +15,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- Spring -->
-		<spring-framework.version>3.2.9.RELEASE</spring-framework.version>
+		<spring-framework.version>3.2.13.RELEASE</spring-framework.version>
 
 		<!-- Hibernate / JPA -->
 		<hibernate.version>4.2.1.Final</hibernate.version>
@@ -28,7 +28,7 @@
 		<junit.version>4.11</junit.version>
 
 		<maven.test.failure.ignore>false</maven.test.failure.ignore>
-		<spring.security.version>3.1.0.RELEASE</spring.security.version>
+		<spring.security.version>3.2.7.RELEASE</spring.security.version>
 		<slf4j.version>1.7.6</slf4j.version>
 	</properties>
 
@@ -198,6 +198,11 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-taglibs</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-openid</artifactId>
 			<version>${spring.security.version}</version>
 		</dependency>
 	</dependencies>
